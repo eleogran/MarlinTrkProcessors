@@ -82,17 +82,12 @@ ClonesAndSplitTracksFinder::ClonesAndSplitTracksFinder() : Processor("ClonesAndS
   registerProcessorParameter("maxDeltaTheta",
 			     "maximum theta separation for merging (in deg)",
 			     _maxDeltaTheta,
-			     double(0.59));
+			     double(0.009));
 
   registerProcessorParameter("maxDeltaPhi",
 			     "maximum phi separation for merging (in deg)",
 			     _maxDeltaPhi,
-			     double(0.99));
-
-  registerProcessorParameter("maxDeltaPt",
-			     "maximum pt separation for merging (in GeV/c)",
-			     _maxDeltaPt,
-			     double(0.69));
+			     double(0.09));
 
   registerProcessorParameter("mergeSplitTracks",
 			     "if true, the merging of split tracks is performed",
@@ -319,12 +314,10 @@ void ClonesAndSplitTracksFinder::mergeSplitTracks(std::unique_ptr<LCCollectionVe
       for(UInt_t jTrack = 0; jTrack < tracksWithoutClones.size(); ++jTrack) {
 
 	Track *track_j = static_cast<Track *>(tracksWithoutClones.at(jTrack));
-	bool isCloseInTheta = false, isCloseInPhi = false, isCloseInPt = false;
+	bool isCloseInTheta = false, isCloseInPhi = false;
     
 	if(track_j != track_i){
 
-	  double pt_i = 0.3 * _magneticField/ (fabs(track_i->getOmega())*1000.);
-	  double pt_j = 0.3 * _magneticField / (fabs(track_j->getOmega()*1000.));
 	  double theta_i = ( M_PI/2 - atan(track_i->getTanLambda()) ) * 180./M_PI;
 	  double theta_j = ( M_PI/2 - atan(track_j->getTanLambda()) ) * 180./M_PI;
 	  double phi_i = track_i->getPhi() * 180./M_PI;
@@ -336,13 +329,9 @@ void ClonesAndSplitTracksFinder::mergeSplitTracks(std::unique_ptr<LCCollectionVe
 	  if(fabs(phi_i - phi_j) < _maxDeltaPhi){
 	    isCloseInPhi = true;
 	  }
-	  if(fabs(pt_i - pt_j) < _maxDeltaPt){
-	    isCloseInPt = true;
-	  }
-
 	}
 
-	toBeMerged = isCloseInTheta && isCloseInPhi && isCloseInPt;
+	toBeMerged = isCloseInTheta && isCloseInPhi;
 
 	if(toBeMerged){  // merging, refitting, storing in a container of mergingCandidates (multimap <*track1, pair<*track2,*trackMerged>>)
 	  EVENT::Track* lcioTrkPtr=nullptr;

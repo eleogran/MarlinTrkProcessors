@@ -78,7 +78,7 @@ protected:
   double _magneticField = 0.0;
   bool _extrapolateForward = true;
 
-  double _maxDeltaTheta = 0.0, _maxDeltaPhi = 0.0, _maxDeltaPt = 0.0;
+  double _maxDeltaTheta = 0.0, _maxDeltaPhi = 0.0;
 
   bool _mergeSplitTracks = false;
 
